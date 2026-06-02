@@ -1,0 +1,40 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: 280px;
+  width: calc(100% - 280px);
+}
+
+.top-header {
+  height: 110px;
+  background: #ffffff;
+  border-bottom: 1px solid #e8edf5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 36px;
+}
+
+.top-header h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+.top-header p {
+  margin: 8px 0 0;
+  color: #52627a;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #17253f;
+}
+
+.page-content {
+  padding: 26px 30px;
+}

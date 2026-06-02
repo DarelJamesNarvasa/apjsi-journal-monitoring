@@ -1,0 +1,116 @@
+.table-card {
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #ffffff;
+}
+
+th,
+td {
+  padding: 17px 20px;
+  border-bottom: 1px solid #e5ebf3;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  color: #14213d;
+  font-weight: 700;
+}
+
+td {
+  color: #10233d;
+}
+
+.link-text {
+  color: #005eff;
+  font-weight: 600;
+}
+
+.badge {
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.queued {
+  background: #fff1d6;
+  color: #e08a00;
+}
+
+.badge.review {
+  background: #e4f0ff;
+  color: #005eff;
+}
+
+.badge.accepted {
+  background: #d9f8e7;
+  color: #009b57;
+}
+
+.badge.published {
+  background: #d9f8e7;
+  color: #009b57;
+}
+
+.badge.revision {
+  background: #eee1ff;
+  color: #7c3fe6;
+}
+
+.workflow-actions {
+  display: flex;
+  gap: 9px;
+}
+
+.workflow-actions button,
+.workflow-actions a {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #cfd8e6;
+  background: white;
+  color: #005eff;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+}
+
+.empty-table {
+  text-align: center;
+  padding: 40px;
+  color: #52627a;
+}
+
+.table-footer {
+  padding: 18px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #52627a;
+}
+
+.pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #cfd8e6;
+  background: white;
+  border-radius: 6px;
+}
+
+.pagination button.active {
+  background: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
