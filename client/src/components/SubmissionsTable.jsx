@@ -1,7 +1,31 @@
+import { useMemo, useState } from "react";
 import { ExternalLink, Edit, UserRound } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 
-function SubmissionsTable({ papers }) {
+function SubmissionsTable({ papers = [] }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(papers.length / itemsPerPage);
+
+  const paginatedPapers = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return papers.slice(start, end);
+  }, [papers, currentPage]);
+
+  const goToPage = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  const openLink = (url) => {
+    if (!url) return;
+    window.open(url, "_blank", "noreferrer");
+  };
+
   return (
     <div className="table-card">
       <table>
@@ -15,46 +39,101 @@ function SubmissionsTable({ papers }) {
             <th>Progress</th>
             <th>Section</th>
             <th>Workflow Links</th>
+            <th>Publication</th>
           </tr>
         </thead>
 
         <tbody>
-          {papers.map((paper) => (
+          {paginatedPapers.map((paper) => (
             <tr key={paper.id}>
               <td className="link-text">{paper.id}</td>
-              <td>{paper.title}</td>
-              <td>{paper.authors}</td>
-              <td>{paper.submittedDate}</td>
+
+              <td>{paper.title || "Untitled Paper"}</td>
+
+              <td>{paper.authors || "No authors"}</td>
+
+              <td>{paper.submittedDate || "N/A"}</td>
+
               <td>
-                <StatusBadge value={paper.status} />
+                <StatusBadge value={paper.status || "Queued"} />
               </td>
+
               <td>
-                <StatusBadge value={paper.progress} />
+                <StatusBadge value={paper.progress || "Review"} />
               </td>
-              <td>{paper.section}</td>
+
+              <td>{paper.section || "Research Articles"}</td>
+
               <td>
                 <div className="workflow-actions">
-                  <button>
+                  <button
+                    type="button"
+                    title="Submission"
+                    onClick={() =>
+                      openLink(
+                        paper.workflowLinks?.submission || paper.workflowUrl
+                      )
+                    }
+                  >
                     <UserRound size={16} />
                   </button>
-                  <button>
+
+                  <button
+                    type="button"
+                    title="Review / Edit"
+                    onClick={() =>
+                      openLink(paper.workflowLinks?.review || paper.workflowUrl)
+                    }
+                  >
                     <Edit size={16} />
                   </button>
-                  <a
-                    href={paper.workflowUrl || "#"}
-                    target="_blank"
-                    rel="noreferrer"
+
+                  <button
+                    type="button"
+                    title="Copyediting"
+                    onClick={() =>
+                      openLink(
+                        paper.workflowLinks?.copyediting || paper.workflowUrl
+                      )
+                    }
                   >
                     <ExternalLink size={16} />
-                  </a>
+                  </button>
+
+                  <button
+                    type="button"
+                    title="Production"
+                    onClick={() =>
+                      openLink(
+                        paper.workflowLinks?.production || paper.workflowUrl
+                      )
+                    }
+                  >
+                    <ExternalLink size={16} />
+                  </button>
                 </div>
+              </td>
+
+              <td>
+                {paper.publicationUrl ? (
+                  <a
+                    href={paper.publicationUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="link-text"
+                  >
+                    View
+                  </a>
+                ) : (
+                  "N/A"
+                )}
               </td>
             </tr>
           ))}
 
           {papers.length === 0 && (
             <tr>
-              <td colSpan="8" className="empty-table">
+              <td colSpan="9" className="empty-table">
                 No submissions found.
               </td>
             </tr>
@@ -63,14 +142,40 @@ function SubmissionsTable({ papers }) {
       </table>
 
       <div className="table-footer">
-        <span>Showing {papers.length} entries</span>
-        <div className="pagination">
-          <button>‹</button>
-          <button className="active">1</button>
-          <button>2</button>
-          <button>3</button>
-          <button>›</button>
-        </div>
+        <span>
+          Showing {paginatedPapers.length} of {papers.length} entries
+        </span>
+
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              type="button"
+              disabled={currentPage === 1}
+              onClick={() => goToPage(currentPage - 1)}
+            >
+              ‹
+            </button>
+
+            {pageNumbers.map((page) => (
+              <button
+                type="button"
+                key={page}
+                className={currentPage === page ? "active" : ""}
+                onClick={() => goToPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              disabled={currentPage === totalPages}
+              onClick={() => goToPage(currentPage + 1)}
+            >
+              ›
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

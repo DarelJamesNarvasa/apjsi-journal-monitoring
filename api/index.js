@@ -12,6 +12,16 @@ function getLocalized(value) {
   if (typeof value === "string") return value;
   return value.en_US || value.en || value["en-US"] || Object.values(value)[0] || "";
 }
+app.get("/api/check-token", (req, res) => {
+  const token = process.env.OJS_API_KEY || "";
+
+  res.json({
+    exists: !!token,
+    length: token.length,
+    startsWith: token.substring(0, 15),
+    hasSegments: token.split(".").length,
+  });
+});
 
 app.get("/api/test-ojs", async (req, res) => {
   try {
@@ -33,6 +43,14 @@ app.get("/api/test-ojs", async (req, res) => {
       error: error.response?.data || error.message,
     });
   }
+});
+
+app.get("/api/debug-env", (req, res) => {
+  res.json({
+    hasBaseUrl: !!process.env.OJS_BASE_URL,
+    baseUrl: process.env.OJS_BASE_URL || null,
+    hasApiKey: !!process.env.OJS_API_KEY,
+  });
 });
 
 app.get("/api/submissions", async (req, res) => {

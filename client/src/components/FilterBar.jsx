@@ -21,7 +21,7 @@ function FilterBar({ search, setSearch, status, setStatus }) {
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
           <option>All Status</option>
           <option>Queued</option>
-          <option>Under Review</option>
+          <option>Review</option>
           <option>Published</option>
           <option>Accepted</option>
           <option>Declined</option>

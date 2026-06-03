@@ -7,7 +7,6 @@ import {
   Settings,
   Logs,
   Info,
-  BookOpen,
 } from "lucide-react";
 
 function Sidebar() {

@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useMemo, useState } from "react";
 import { FileText, CalendarDays, Clock, CheckCircle } from "lucide-react";
+import Swal from "sweetalert2";
 
 import api from "../services/api";
 import StatCard from "../components/StatCard";
@@ -19,15 +21,43 @@ function Dashboard() {
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
+
+      Swal.fire({
+        title: "Loading Submissions...",
+        html: "Fetching data from OJS. Please wait...",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       const res = await api.get("/submissions");
 
       if (res.data.success) {
-        setPapers(res.data.papers);
+        setPapers(res.data.papers || []);
         setConnected(true);
+
+        Swal.fire({
+          icon: "success",
+          title: "Submissions Loaded",
+          text: `${res.data.count || res.data.papers?.length || 0} submissions fetched successfully.`,
+          timer: 1600,
+          showConfirmButton: false,
+        });
       }
     } catch (error) {
       console.error(error);
       setConnected(false);
+
+      Swal.fire({
+        icon: "error",
+        title: "Fetch Failed",
+        text:
+          error.response?.data?.message ||
+          error.message ||
+          "Unable to fetch submissions from OJS.",
+      });
     } finally {
       setLoading(false);
     }
@@ -35,12 +65,39 @@ function Dashboard() {
 
   const testConnection = async () => {
     try {
+      Swal.fire({
+        title: "Testing Connection...",
+        html: "Checking OJS API connection...",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       await api.get("/test-ojs");
+
       setConnected(true);
-      alert("OJS API connected successfully");
+
+      Swal.fire({
+        icon: "success",
+        title: "Connected",
+        text: "OJS API connected successfully.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (error) {
+      console.error("Connection test failed:", error);
       setConnected(false);
-      alert("OJS API connection failed");
+
+      Swal.fire({
+        icon: "error",
+        title: "Connection Failed",
+        text:
+          error.response?.data?.message ||
+          error.message ||
+          "OJS API connection failed.",
+      });
     }
   };
 
@@ -54,8 +111,8 @@ function Dashboard() {
 
       const matchesSearch =
         String(paper.id).toLowerCase().includes(keyword) ||
-        paper.title.toLowerCase().includes(keyword) ||
-        paper.authors.toLowerCase().includes(keyword);
+        String(paper.title || "").toLowerCase().includes(keyword) ||
+        String(paper.authors || "").toLowerCase().includes(keyword);
 
       const matchesStatus =
         status === "All Status" || String(paper.status).includes(status);
@@ -63,6 +120,15 @@ function Dashboard() {
       return matchesSearch && matchesStatus;
     });
   }, [papers, search, status]);
+
+  const submittedToday = papers.filter((p) => {
+    if (!p.submittedDate) return false;
+
+    const submitted = new Date(p.submittedDate).toDateString();
+    const today = new Date().toDateString();
+
+    return submitted === today;
+  }).length;
 
   const published = papers.filter((p) =>
     String(p.status).toLowerCase().includes("publish")
@@ -86,7 +152,7 @@ function Dashboard() {
         <StatCard
           icon={<CalendarDays size={30} />}
           title="Submitted Today"
-          value="0"
+          value={submittedToday}
           subtitle="Today"
           color="green"
         />

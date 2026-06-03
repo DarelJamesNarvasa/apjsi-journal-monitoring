@@ -8,6 +8,7 @@ import "./styles/sidebar.css";
 import "./styles/dashboard.css";
 import "./styles/table.css";
 import "./styles/responsive.css";
+import "./styles/pagination.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

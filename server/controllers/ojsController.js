@@ -7,8 +7,10 @@ const testOjsConnection = async (req, res) => {
 
     res.json({
       success: true,
-      message: "OJS API connected successfully",
-      raw: data,
+      total: data.itemsTotal,
+      returned: data.items?.length || 0,
+      fetchedAt: new Date().toISOString(),
+      data,
     });
   } catch (error) {
     res.status(500).json({
@@ -22,12 +24,15 @@ const testOjsConnection = async (req, res) => {
 const getSubmissions = async (req, res) => {
   try {
     const data = await fetchOjsSubmissions();
-    const items = data.items || data || [];
+    const items = data.items || [];
+
     const papers = items.map(normalizeSubmission);
 
     res.json({
       success: true,
+      total: data.itemsTotal,
       count: papers.length,
+      fetchedAt: new Date().toISOString(),
       papers,
     });
   } catch (error) {
